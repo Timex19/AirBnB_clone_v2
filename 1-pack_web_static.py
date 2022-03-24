@@ -2,17 +2,18 @@
 """ Function that compress a folder """
 from datetime import datetime
 from fabric.api import local
-import os
+import os.path
 
 
 def do_pack():
-    try:
-        if not os.path.exists("versions"):
-            local('mkdir versions')
-        t = datetime.now()
-        f = "%Y%m%d%H%M%S"
-        archive_path = 'versions/web_static_{}.tgz'.format(t.strftime(f))
-        local('tar -cvzf {} web_static'.format(archive_path))
-        return archive_path
-    except:
-        return None
+    """
+    generate tgz archive using fabric
+    """
+    date = datetime.now().strftime("%Y%m%d%H%M%S")
+    file_path = "versions/web_static_{}.tgz".format(date)
+    if os.path.isdir("versions") is False:
+        local(" mkdir versions")
+    local('tar -cvzf ' + file_path + ' web_static')
+    if os.path.exists(file_path):
+        return file_path
+    return None
